@@ -98,24 +98,20 @@ npm run dev
 
 Open `http://localhost:5173`, connect a testnet wallet, and donate 🎉
 
-## Deployed contract (fill in after your own deploy)
+## Deployed contract
 
-- **Contract ID:** `PASTE_CONTRACT_ID_HERE`
-- **Deployed by (public key):** `PASTE_PUBLIC_KEY_HERE`
-- **Explorer link:** `https://stellar.expert/explorer/testnet/contract/PASTE_CONTRACT_ID_HERE`
+- **Contract ID:** `CBTUNIZMFD7RUVCNK2RTEAPRVHH5VQLKWSNWFERBHVAE64QSNHVS5353`
+- **Deployed by (public key):** `GCGUOKRFNR775ZC2CN3ZZGL67ZW47TKUSCE5FHVHGNPZIMM2G2O4T4SI`
+- **Explorer link:** https://stellar.expert/explorer/testnet/contract/CBTUNIZMFD7RUVCNK2RTEAPRVHH5VQLKWSNWFERBHVAE64QSNHVS5353
 
-## Example transaction (fill in after a donation)
+## Example transaction
 
-- **Tx hash:** `PASTE_TX_HASH_HERE`
-- **Explorer link:** `https://stellar.expert/explorer/testnet/tx/PASTE_TX_HASH_HERE`
+- **Tx hash:** `c5b8445d1b5ce20359d6dfc47b85e87c2077b8dd62551335fdc2628204e3e4c8`
+- **Explorer link:** https://stellar.expert/explorer/testnet/tx/c5b8445d1b5ce20359d6dfc47b85e87c2077b8dd62551335fdc2628204e3e4c8
 
 ## Screenshot: wallet options
 
 ![Wallet options](docs/wallet-options.png)
-
-## Live demo
-
-_Optional — deploy `frontend/` to Vercel or Netlify and drop the link here._
 
 ## Notes / things I'd improve with more time
 
