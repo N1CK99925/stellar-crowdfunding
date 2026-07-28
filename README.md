@@ -111,11 +111,7 @@ Open `http://localhost:5173`, connect a testnet wallet, and donate 🎉
 
 ## Screenshot: wallet options
 
-_Add a screenshot of the wallet picker modal here, e.g. `docs/wallet-options.png`, and reference it like:_
-
-```md
 ![Wallet options](docs/wallet-options.png)
-```
 
 ## Live demo
 
