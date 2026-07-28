@@ -1,0 +1,13 @@
+# Rust / Soroban
+/contracts/target
+Cargo.lock
+
+# Node
+frontend/node_modules
+frontend/dist
+frontend/.env
+frontend/.env.local
+
+# Misc
+.DS_Store
+*.log
