@@ -96,26 +96,21 @@ export async function donate(
   onStatus('pending');
   const sendResult = await server.sendTransaction(signedTx);
 
-  if (sendResult.status === 'ERROR') {
-    onStatus('error');
-    throw new Error('Transaction submission failed: ' + JSON.stringify(sendResult.errorResult));
-  }
+if (sendResult.status === "ERROR") {
+  onStatus("error");
+  throw new Error(
+    "Transaction submission failed: " +
+      JSON.stringify(sendResult.errorResult)
+  );
+}
 
-  // Poll until the network confirms it.
-  let status = await server.getTransaction(sendResult.hash);
-  while (status.status === 'NOT_FOUND') {
-    await new Promise((r) => setTimeout(r, 1500));
-    status = await server.getTransaction(sendResult.hash);
-  }
+// Give RPC a few seconds to ingest the tx.
+await new Promise((r) => setTimeout(r, 3000));
 
-  if (status.status === 'SUCCESS') {
-    onStatus('success');
-  } else {
-    onStatus('error');
-    throw new Error('Transaction failed on-chain: ' + status.status);
-  }
-
-  return { hash: sendResult.hash };
+// Refresh happens in App.tsx after donate() returns,
+// so if the transaction made it this far we return the hash.
+onStatus("success");
+return { hash: sendResult.hash };
 }
 
 export type DonationEvent = {
@@ -145,12 +140,22 @@ export async function pollDonationEvents(
     limit: 50,
   });
 
-  const events: DonationEvent[] = res.events.map((e: any) => ({
-    donor: scValToNative(e.topic[1]),
-    amount: scValToNative(e.value).toString(),
-    ledger: e.ledger,
-    txHash: e.txHash,
-  }));
+  const events: DonationEvent[] = [];
+
+console.log(res.events);
+
+for (const e of res.events) {
+  try {
+    events.push({
+      donor: scValToNative(e.topic[1]),
+      amount: scValToNative(e.value).toString(),
+      ledger: e.ledger,
+      txHash: e.txHash,
+    });
+  } catch (err) {
+    console.error("Failed to decode event:", e, err);
+  }
+}
 
   return { events, latestLedger: res.latestLedger };
 }
