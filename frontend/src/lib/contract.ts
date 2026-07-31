@@ -90,27 +90,56 @@ export async function donate(
 
   const prepared = await server.prepareTransaction(tx);
   const signedXdr = await signTx(prepared.toXDR(), donorAddress);
-
   const signedTx = TransactionBuilder.fromXDR(signedXdr, NETWORK_PASSPHRASE);
 
   onStatus('pending');
   const sendResult = await server.sendTransaction(signedTx);
 
-if (sendResult.status === "ERROR") {
-  onStatus("error");
-  throw new Error(
-    "Transaction submission failed: " +
-      JSON.stringify(sendResult.errorResult)
-  );
+  if (sendResult.status === 'ERROR') {
+    onStatus('error');
+    throw new Error(`Transaction submission failed: ${JSON.stringify(sendResult.errorResult)}`);
+  }
+
+  const hash = sendResult.hash;
+
+  try {
+    await waitForTransactionConfirmation(hash, onStatus);
+  } catch (err) {
+    onStatus('error');
+    throw err;
+  }
+
+  return { hash };
 }
 
-// Give RPC a few seconds to ingest the tx.
-await new Promise((r) => setTimeout(r, 3000));
+async function waitForTransactionConfirmation(
+  hash: string,
+  onStatus: (s: TxStatus) => void,
+): Promise<void> {
+  const timeoutMs = 30_000;
+  const pollIntervalMs = 1_500;
+  const startedAt = Date.now();
 
-// Refresh happens in App.tsx after donate() returns,
-// so if the transaction made it this far we return the hash.
-onStatus("success");
-return { hash: sendResult.hash };
+  while (Date.now() - startedAt < timeoutMs) {
+    const tx = await server.getTransaction(hash);
+    const status = (tx as { status?: string }).status;
+
+    if (status === 'SUCCESS') {
+      onStatus('success');
+      return;
+    }
+
+    if (status === 'FAILED') {
+      const detail = (tx as { resultXdr?: string }).resultXdr
+        ? `: ${(tx as { resultXdr?: string }).resultXdr}`
+        : '';
+      throw new Error(`Transaction failed on-chain${detail}`);
+    }
+
+    await new Promise((resolve) => setTimeout(resolve, pollIntervalMs));
+  }
+
+  throw new Error(`Transaction confirmation timed out: ${hash}`);
 }
 
 export type DonationEvent = {

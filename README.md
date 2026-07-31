@@ -118,7 +118,24 @@ Open `http://localhost:5173`, connect a testnet wallet, and donate 🎉
 
 ## Screenshot: wallet options
 
-![Wallet options](docs/wallet-options.png)
+![StellarWalletsKit wallet options](docs/wallet-options.png)
+
+## Yellow Belt Requirements Verification
+
+| Requirement | Implementation | Evidence |
+|---|---|---|
+| StellarWalletsKit multi-wallet integration | Wallet selection and address retrieval are handled through StellarWalletsKit in [frontend/src/lib/wallet.ts](frontend/src/lib/wallet.ts) | [frontend/src/lib/wallet.ts](frontend/src/lib/wallet.ts) |
+| 3 handled error types | Wallet not found, rejected signing, and insufficient balance are normalised and surfaced in [frontend/src/lib/wallet.ts](frontend/src/lib/wallet.ts) and [frontend/src/components/DonationForm.tsx](frontend/src/components/DonationForm.tsx) | [frontend/src/lib/wallet.ts](frontend/src/lib/wallet.ts), [frontend/src/components/DonationForm.tsx](frontend/src/components/DonationForm.tsx) |
+| Contract deployed on Stellar Testnet | The app targets the deployed Soroban crowdfunding contract via [frontend/src/lib/constants.ts](frontend/src/lib/constants.ts) | [frontend/src/lib/constants.ts](frontend/src/lib/constants.ts) |
+| Contract called from frontend | The donation flow builds and submits a Soroban contract invocation from the browser in [frontend/src/lib/contract.ts](frontend/src/lib/contract.ts) | [frontend/src/lib/contract.ts](frontend/src/lib/contract.ts) |
+| Contract state read/write | The contract reads campaign state with `get_info` and writes via `donate` / `withdraw` in [contracts/crowdfunding/src/lib.rs](contracts/crowdfunding/src/lib.rs) | [contracts/crowdfunding/src/lib.rs](contracts/crowdfunding/src/lib.rs) |
+| Contract donation events | Donation events are emitted by the contract and decoded by the frontend in [contracts/crowdfunding/src/lib.rs](contracts/crowdfunding/src/lib.rs) and [frontend/src/lib/contract.ts](frontend/src/lib/contract.ts) | [contracts/crowdfunding/src/lib.rs](contracts/crowdfunding/src/lib.rs), [frontend/src/lib/contract.ts](frontend/src/lib/contract.ts) |
+| Real-time event synchronization | The app polls for new contract events and refreshes the UI from [frontend/src/App.tsx](frontend/src/App.tsx) | [frontend/src/App.tsx](frontend/src/App.tsx) |
+| Transaction pending/success/fail tracking | Donation status now stays pending until the transaction reaches `SUCCESS` or `FAILED`, with timeout handling in [frontend/src/lib/contract.ts](frontend/src/lib/contract.ts) | [frontend/src/lib/contract.ts](frontend/src/lib/contract.ts) |
+| Contract ID | The deployed contract ID is documented in the app config and README | [frontend/src/lib/constants.ts](frontend/src/lib/constants.ts) |
+| Example transaction hash | An example Stellar transaction hash is included in the README for reviewers | [README.md](README.md) |
+| Wallet options screenshot | The wallet options image is embedded directly in this README | [docs/wallet-options.png](docs/wallet-options.png) |
+| 2+ meaningful commits | The project history contains multiple commits for the contract, frontend, docs, and submission polish | [README.md](README.md) |
 
 ## Notes / things I'd improve with more time
 
