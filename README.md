@@ -143,6 +143,24 @@ Open `http://localhost:5173`, connect a testnet wallet, and donate 🎉
 - `withdraw` is implemented and tested but there's no UI for it yet since only the campaign owner can call it.
 - No backend — everything talks directly to Soroban RPC from the browser.
 
+## Submission checklist
+
+| Requirement | Implementation |
+|---|---|
+| Multi-wallet integration | StellarWalletsKit + allowAllModules in `frontend/src/lib/wallet.ts` |
+| 3 error types | Wallet missing, user rejection, insufficient balance in `frontend/src/lib/wallet.ts` and `frontend/src/components/DonationForm.tsx` |
+| Contract deployed | Stellar Testnet contract ID in `frontend/src/lib/constants.ts` |
+| Frontend contract call | `donate()` in `frontend/src/lib/contract.ts` |
+| Contract read | `get_info()` in `frontend/src/lib/contract.ts` |
+| Contract write | `donate()` in `frontend/src/lib/contract.ts` |
+| Event handling | `donation` event in `contracts/crowdfunding/src/lib.rs` and `frontend/src/lib/contract.ts` |
+| Real-time sync | Event polling in `frontend/src/App.tsx` |
+| Transaction status tracking | Pending/success/fail handling in `frontend/src/lib/contract.ts` |
+| Contract ID | `CBTUNIZMFD7RUVCNK2RTEAPRVHH5VQLKWSNWFERBHVAE64QSNHVS5353` |
+| Example tx hash | `c5b8445d1b5ce20359d6dfc47b85e87c2077b8dd62551335fdc2628204e3e4c8` |
+| Wallet screenshot | `docs/wallet-options.png` embedded above |
+| Commits | 2+ meaningful commits as shown in git history |
+
 ## License
 
 MIT — do whatever you want with it.
