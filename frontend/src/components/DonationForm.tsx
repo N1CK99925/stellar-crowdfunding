@@ -15,6 +15,14 @@ export default function DonationForm({ address, onDonated }: Props) {
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [txHash, setTxHash] = useState<string | null>(null);
 
+  const helperText: Record<TxStatus, string> = {
+    idle: 'Connect your wallet and choose an amount to donate on Stellar Testnet.',
+    building: 'Preparing the donation transaction…',
+    pending: 'Please review and approve the request in your wallet.',
+    success: 'Donation submitted successfully. The activity feed should update shortly.',
+    error: 'The donation could not be completed. Please try again.',
+  };
+
   async function handleDonate() {
     if (!address) {
       setErrorMsg('Connect a wallet first.');
@@ -68,12 +76,13 @@ export default function DonationForm({ address, onDonated }: Props) {
           disabled={!address || status === 'pending' || status === 'building'}
         >
           {status === 'building' && 'Preparing…'}
-          {status === 'pending' && 'Confirming…'}
+          {status === 'pending' && 'Approve in wallet'}
           {(status === 'idle' || status === 'success' || status === 'error') && 'Donate'}
         </button>
       </div>
 
       <StatusBadge status={status} />
+      <p className="helper-text">{helperText[status]}</p>
 
       {errorMsg && <p className="error-text">⚠️ {errorMsg}</p>}
 

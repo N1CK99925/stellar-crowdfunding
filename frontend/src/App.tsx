@@ -4,6 +4,7 @@ import DonationForm from './components/DonationForm';
 import ProgressBar from './components/ProgressBar';
 import ActivityFeed from './components/ActivityFeed';
 import { getCampaignInfo, pollDonationEvents, CampaignInfo, DonationEvent, server } from './lib/contract';
+import { CONTRACT_ID } from './lib/constants';
 
 export default function App() {
   const [address, setAddress] = useState<string | null>(null);
@@ -63,6 +64,17 @@ export default function App() {
 
       {info && (
         <>
+          <div className="card intro-card">
+            <h3>How this demo works</h3>
+            <ol className="steps">
+              <li>Connect a wallet on Stellar Testnet.</li>
+              <li>Enter an XLM amount and approve the donation in your wallet.</li>
+              <li>Watch the campaign progress and activity feed update from contract events.</li>
+            </ol>
+            <p className="muted small-note">
+              Live contract: <span className="mono">{CONTRACT_ID}</span>
+            </p>
+          </div>
           <ProgressBar raised={info.raised} goal={info.goal} />
           <DonationForm address={address} onDonated={refresh} />
           <ActivityFeed events={events} />

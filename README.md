@@ -12,6 +12,13 @@ I built this for the **Yellow Belt** level — the goal was to get comfortable w
 - Watch the progress bar and a live donor feed update automatically, driven by contract events (`donate` emits a `donation` event that the frontend listens for via `getEvents`).
 - Get clear, human error messages instead of raw RPC errors when something goes wrong.
 
+## What reviewers should see
+
+A reviewer should be able to:
+1. Connect a Stellar wallet on Testnet.
+2. Enter an amount and approve a donation.
+3. See the campaign progress and activity feed update from the deployed contract.
+
 ## Stack
 
 - **Contract:** Rust + `soroban-sdk` (v21)
