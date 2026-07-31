@@ -1,4 +1,4 @@
-# 🚀 Testnet Crowdfunding — Stellar Yellow Belt Submission
+#  Testnet Crowdfunding — Stellar Yellow Belt Submission
 
 A tiny crowdfunding dApp built on Soroban (Stellar's smart contract platform). Connect any supported wallet, donate testnet XLM toward a funding goal, and watch the progress bar and activity feed update live as donations come in.
 
