@@ -121,18 +121,20 @@ async function waitForTransactionConfirmation(
   const startedAt = Date.now();
 
   while (Date.now() - startedAt < timeoutMs) {
-    const tx = await server.getTransaction(hash);
-    const status = (tx as { status?: string }).status;
+    // The installed SDK is built against a Protocol-23-era stellar-base whose
+    // `TransactionMeta` union only knows v0–v3, but the current testnet returns
+    // `TransactionMetaV4` from `getTransaction`, which makes `server.getTransaction`
+    // throw "Bad union switch: 4" for an already-applied transaction. Poll the raw
+    // JSON-RPC response instead and only read the plain `status`/`resultXdr` fields.
+    const tx = await rawGetTransaction(hash);
 
-    if (status === 'SUCCESS') {
+    if (tx.status === 'SUCCESS') {
       onStatus('success');
       return;
     }
 
-    if (status === 'FAILED') {
-      const detail = (tx as { resultXdr?: string }).resultXdr
-        ? `: ${(tx as { resultXdr?: string }).resultXdr}`
-        : '';
+    if (tx.status === 'FAILED') {
+      const detail = tx.resultXdr ? `: ${tx.resultXdr}` : '';
       throw new Error(`Transaction failed on-chain${detail}`);
     }
 
@@ -140,6 +142,32 @@ async function waitForTransactionConfirmation(
   }
 
   throw new Error(`Transaction confirmation timed out: ${hash}`);
+}
+
+type RawGetTransaction = { status?: string; resultXdr?: string };
+
+async function rawGetTransaction(hash: string): Promise<RawGetTransaction> {
+  const res = await fetch(RPC_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      jsonrpc: '2.0',
+      id: 1,
+      method: 'getTransaction',
+      params: { hash },
+    }),
+  });
+  if (!res.ok) {
+    throw new Error(`RPC getTransaction failed: HTTP ${res.status}`);
+  }
+  const payload = (await res.json()) as {
+    result?: { status?: string; resultXdr?: string };
+    error?: { message?: string };
+  };
+  if (payload.error) {
+    throw new Error(`RPC getTransaction failed: ${payload.error.message}`);
+  }
+  return payload.result ?? {};
 }
 
 export type DonationEvent = {
